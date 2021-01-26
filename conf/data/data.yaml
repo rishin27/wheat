@@ -1,4 +1,4 @@
 data:
-  folder_path: f:/wheat
+  folder_path: /content/wheat/data
   num_workers: 0
   batch_size: 4

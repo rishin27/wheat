@@ -1,2 +1,2 @@
-dataset:
-  class_name: src.utils.dataset.WheatDataset
+# @package _group_
+class_name: src.utils.dataset.WheatDataset

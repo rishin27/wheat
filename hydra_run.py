@@ -28,8 +28,9 @@ def run(cfg: DictConfig) -> None:
     model = LitWheat(hparams=hparams, cfg=cfg)
 
     early_stopping = pl.callbacks.EarlyStopping(**cfg.callbacks.early_stopping.params)
-    model_checkpoint = pl.callbacks.ModelCheckpoint(**cfg.callbacks.model_checkpoint.params)
-    lr_logger = pl.callbacks.LearningRateLogger()
+    model_checkpoint = pl.callbacks.ModelCheckpoint(
+        **cfg.callbacks.model_checkpoint.params
+    )
 
     tb_logger = TensorBoardLogger(save_dir=cfg.general.save_dir)
     # comet_logger = CometLogger(save_dir=cfg.general.save_dir,
@@ -40,27 +41,24 @@ def run(cfg: DictConfig) -> None:
     json_logger = JsonLogger()
 
     trainer = pl.Trainer(
-        logger=[tb_logger, # comet_logger,
-                json_logger],
-        early_stop_callback=early_stopping,
-        checkpoint_callback=model_checkpoint,
-        callbacks=[lr_logger],
+        logger=[tb_logger, json_logger],  # comet_logger,
+        callbacks=[early_stopping, model_checkpoint],
         **cfg.trainer,
     )
     trainer.fit(model)
 
     # save as a simple torch model
-    model_name = os.getcwd().split('\\')[-1] + '.pth'
+    model_name = os.getcwd().split("\\")[-1] + ".pth"
     print(model_name)
     torch.save(model.model.state_dict(), model_name)
 
 
-@hydra.main(config_path='conf/config.yaml')
+@hydra.main(config_path="conf", config_name="config")
 def run_model(cfg: DictConfig) -> None:
     print(cfg.pretty())
     save_useful_info()
     run(cfg)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_model()
